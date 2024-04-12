@@ -14,6 +14,7 @@ public class Main {
     public static void main(String[] args) {
 
 
+
     }
 
     /**
@@ -115,7 +116,7 @@ public class Main {
     /**
      * Find second-highest number from an array
      */
-    private static void sencondHighestNumber() {
+    private static void secondHighestNumber() {
 
         int [] numbers = {1,3,14,24,35,56,68,23};
 
@@ -169,7 +170,7 @@ public class Main {
     /**
      * Count all occurrence of a letter
      */
-    private static void countAllOcurrence () {
+    private static void countAllOccurrence() {
 
         String words = "iloveprogramming";
 

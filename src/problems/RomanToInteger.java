@@ -3,7 +3,7 @@ package problems;
 import java.util.HashMap;
 import java.util.Map;
 
-public class roman_to_integer {
+public class RomanToInteger {
     public static void main(String[] args) {
         int romanToInt = romanToInt("MCMXCIV");
         System.out.println(romanToInt);

@@ -1,6 +1,6 @@
 package problems;
 
-public class fizzbuzz {
+public class FizzBuzz {
     /**
      * Print each number from 1 to 100 on a new line
      * For each multiply of 3 print Fizz instead of a number

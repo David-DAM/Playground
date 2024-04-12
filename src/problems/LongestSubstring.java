@@ -2,7 +2,7 @@ package problems;
 
 import java.util.*;
 
-public class longest_substring {
+public class LongestSubstring {
     /**
      * Given a string s, find the length of the longest
      * substring

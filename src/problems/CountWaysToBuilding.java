@@ -1,6 +1,6 @@
 package problems;
 
-public class count_ways_to_building {
+public class CountWaysToBuilding {
     /**
      * Given the integers zero, one, low, and high, we can construct a string by starting with an empty string, and then at each step perform either of the following:
      *

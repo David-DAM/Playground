@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class combinations_phone_number {
+public class CombinationsPhoneNumber {
     public static void main(String[] args) {
         List<String> letterCombinations = letterCombinations("23");
         System.out.println(letterCombinations);

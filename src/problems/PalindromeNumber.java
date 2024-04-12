@@ -1,6 +1,6 @@
 package problems;
 
-public class palindrome_number {
+public class PalindromeNumber {
     /**
      * Return if the given number is a palindrome
      * @param args

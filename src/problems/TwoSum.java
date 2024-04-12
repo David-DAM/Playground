@@ -2,7 +2,7 @@ package problems;
 
 import java.util.*;
 
-public class two_sum {
+public class TwoSum {
 
     /**
      * Given nums = [ 2,7,11,15 ] target = 9
