@@ -1,15 +1,41 @@
 package streams;
 
+import oop.Father;
+
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.joining;
 
 public class Main {
     public static void main(String[] args) {
 
 
+    }
 
+    /**
+     * Map from list of objects to a list concatenated of his attribute list values
+     */
+    private static void concatenatedList() {
+        Father father = new Father("Pepe",38);
+        father.setPhoneNumbers(List.of("1","2","3"));
+
+        Father father2 = new Father("Pepe",38);
+        father2.setPhoneNumbers(List.of("4","5","6"));
+
+        List<Father> fatherList = new ArrayList<>(List.of(father,father2));
+
+        List<String> stringList = fatherList.stream()
+                .map(x -> Optional.ofNullable(x.getPhoneNumbers()))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .flatMap(Collection::stream)
+                .toList();
+
+        System.out.println(stringList);
     }
 
     /**
