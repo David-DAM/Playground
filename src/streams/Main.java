@@ -14,7 +14,22 @@ public class Main {
     public static void main(String[] args) {
 
 
+    }
 
+    /**
+     * Max value of occurrences by the first letter of a name
+     */
+    private static void maxValueOfOccurrencesFirstLetterOfName() {
+        List<String> nameList = List.of("David", "Dante", "Alberto", "Carolina", "Estrella", "Coral");
+
+        Map.Entry<String, Long> maxValue = nameList.stream()
+                .collect(Collectors.groupingBy(x -> x.substring(0,1), Collectors.counting()))
+                .entrySet()
+                .stream()
+                .max(Map.Entry.comparingByValue())
+                .get();
+
+        System.out.println(maxValue);
     }
 
     /**
