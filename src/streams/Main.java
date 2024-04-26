@@ -6,13 +6,11 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.joining;
 
 public class Main {
     public static void main(String[] args) {
-
 
     }
 
@@ -105,10 +103,9 @@ public class Main {
      * Find all elements from an array who starts with 1
      */
     private static void findAllElementsWhoStartsWith() {
-        int [] numbersArray = { 1, 34, 25, 15, 56, 111, 25 };
+        Integer [] numbersArray = { 1, 34, 25, 15, 56, 111, 25 };
 
         List<Integer> allElementsWhoStartsWith = Arrays.stream(numbersArray)
-                .boxed()
                 .filter(x -> x.toString().startsWith("1"))
                 .toList();
         System.out.println(allElementsWhoStartsWith);
@@ -200,7 +197,7 @@ public class Main {
      */
     private static void sumOfNumbersGrouped() {
 
-        int [] numbers = {1,3,14,24,35,56,68,23};
+        int [] numbers = {1,3,14,24,35,56,68,23,23};
 
         Map<Integer, Integer> sumOfNumbersGrouped = Arrays.stream(numbers)
                 .boxed()

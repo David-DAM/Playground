@@ -40,9 +40,4 @@ public class Main {
 
         return date;
     }
-
-    private static LocalTime a(LocalTime time,LocalTime compare){
-
-        return time;
-    }
 }
