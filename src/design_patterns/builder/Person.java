@@ -1,17 +1,21 @@
 package design_patterns.builder;
 
+import java.util.List;
+
 public class Person {
 
     String name;
     String lastname;
     int age;
     double height;
+    List<String> phones;
 
     private Person(PersonBuilder builder) {
         this.name = builder.name;
         this.lastname = builder.lastname;
         this.age = builder.age;
         this.height = builder.height;
+        this.phones = builder.phones;
     }
 
     public String getName() {
@@ -46,6 +50,14 @@ public class Person {
         this.height = height;
     }
 
+    public List<String> getPhones() {
+        return phones;
+    }
+
+    public void setPhones(List<String> phones) {
+        this.phones = phones;
+    }
+
     @Override
     public String toString() {
         return "Person{" +
@@ -53,6 +65,7 @@ public class Person {
                 ", lastname='" + lastname + '\'' +
                 ", age=" + age +
                 ", height=" + height +
+                ", phones=" + phones +
                 '}';
     }
 
@@ -62,6 +75,7 @@ public class Person {
         String lastname;
         int age;
         double height;
+        List<String> phones;
 
         public PersonBuilder() {
 
@@ -84,6 +98,11 @@ public class Person {
 
         public PersonBuilder setHeight(double height) {
             this.height = height;
+            return this;
+        }
+
+        public PersonBuilder setPhones(List<String> phones) {
+            this.phones = phones;
             return this;
         }
 
