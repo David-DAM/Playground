@@ -1,7 +1,17 @@
 package streams;
 
+import design_patterns.builder.Person;
 import oop.Father;
 
+import java.io.IOException;
+import java.net.Authenticator;
+import java.net.InetSocketAddress;
+import java.net.ProxySelector;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.time.Duration;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -10,8 +20,44 @@ import java.util.stream.IntStream;
 import static java.util.stream.Collectors.joining;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException, InterruptedException {
 
+
+
+    }
+
+    private static void asynchronousHttpCalls() {
+        HttpClient client = HttpClient. newHttpClient();
+
+        List<String> ids = List.of("1", "2", "3", "4", "5", "6", "7", "8","9","10","11","12","13","14","15");
+
+        List<String> bodys = ids.stream()
+                .parallel()
+                .map(x -> {
+
+                    HttpResponse<String> response;
+
+                    HttpRequest request = HttpRequest.newBuilder()
+                            .uri(URI.create("https://jsonplaceholder.typicode.com/todos/" + x))
+                            .timeout(Duration.ofMinutes(2))
+                            .header("Content-Type", "application/ json")
+                            .GET()
+                            .build();
+
+                    try {
+                        response = client.send(request, HttpResponse.BodyHandlers.ofString());
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+
+                    return response.body();
+                })
+                .toList();
+
+
+        System.out.println(bodys);
     }
 
     /**
