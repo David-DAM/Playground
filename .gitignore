@@ -32,3 +32,5 @@ build/
 ### VS Code ###
 .vscode/
 /out/production/Playground/**
+/src/main/java/com/david/io/test.txt
+/src/main/java/com/david/encription/file.encrypted
