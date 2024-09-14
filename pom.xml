@@ -18,6 +18,11 @@
 			<artifactId>jackson-databind</artifactId>
 			<version>2.16.0</version>
 		</dependency>
+		<dependency>
+			<groupId>co.elastic.clients</groupId>
+			<artifactId>elasticsearch-java</artifactId>
+			<version>8.15.1</version>
+		</dependency>
 	</dependencies>
 
 
