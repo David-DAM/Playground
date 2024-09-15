@@ -1,11 +1,12 @@
 package com.david.jackson;
 
+import java.util.List;
 import java.util.Objects;
 
 public class Feature {
 
     private final String type = "Feature";
-    private Properties properties;
+    private List<String> properties;
     private Geometry geometry;
 
     public Feature() {
@@ -15,11 +16,11 @@ public class Feature {
         return type;
     }
 
-    public Properties getProperties() {
+    public List<String> getProperties() {
         return properties;
     }
 
-    public void setProperties(Properties properties) {
+    public void setProperties(List<String> properties) {
         this.properties = properties;
     }
 

@@ -52,7 +52,7 @@ public class Main {
 
             Product product = new Product(1, "City bike", "Great bike", 199);
 
-            //indexDocument(esClient, PRODUCTS);
+            //indexDocument(esClient, product);
 
             //getDocument(esClient, String.valueOf(product.getId()));
 
