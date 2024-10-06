@@ -13,11 +13,26 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static java.util.stream.Collectors.joining;
-
 public class Main {
     public static void main(String[] args) throws IOException, InterruptedException {
 
+
+    }
+
+    /**
+     * Given a list of words just print the palindrome words
+     */
+    private static void showOnlyPalindromeWords() {
+        List<String> stringList = List.of("ala", "pepe", "lol", "lola");
+
+        stringList.stream()
+                .map(x -> {
+                    StringBuilder stringBuilder = new StringBuilder(x);
+                    stringBuilder.reverse();
+                    return stringBuilder.toString();
+                })
+                .filter(stringList::contains)
+                .forEach(System.out::println);
     }
 
     /**
@@ -26,7 +41,7 @@ public class Main {
     private static void asynchronousHttpCalls() {
         HttpClient client = HttpClient.newHttpClient();
 
-        List<String> ids = List.of("1", "2", "3", "4", "5", "6", "7", "8","9","10","11","12","13","14","15");
+        List<String> ids = List.of("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15");
 
         ids.stream()
                 .parallel()
@@ -60,7 +75,7 @@ public class Main {
         List<String> nameList = List.of("David", "Dante", "Alberto", "Carolina", "Estrella", "Coral");
 
         Map.Entry<String, Long> maxValue = nameList.stream()
-                .collect(Collectors.groupingBy(x -> x.substring(0,1), Collectors.counting()))
+                .collect(Collectors.groupingBy(x -> x.substring(0, 1), Collectors.counting()))
                 .entrySet()
                 .stream()
                 .max(Map.Entry.comparingByValue())
@@ -73,13 +88,13 @@ public class Main {
      * Map from list of objects to a list concatenated of his attribute list values
      */
     private static void concatenatedList() {
-        Father father = new Father("Pepe",38);
-        father.setPhoneNumbers(List.of("1","2","3"));
+        Father father = new Father("Pepe", 38);
+        father.setPhoneNumbers(List.of("1", "2", "3"));
 
-        Father father2 = new Father("Pepe",38);
-        father2.setPhoneNumbers(List.of("4","5","6"));
+        Father father2 = new Father("Pepe", 38);
+        father2.setPhoneNumbers(List.of("4", "5", "6"));
 
-        List<Father> fatherList = new ArrayList<>(List.of(father,father2));
+        List<Father> fatherList = new ArrayList<>(List.of(father, father2));
 
         List<String> stringList = fatherList.stream()
                 .map(x -> Optional.ofNullable(x.getPhoneNumbers()))
@@ -95,7 +110,7 @@ public class Main {
      * Remove all duplicate elements from a list using
      */
     private static void removeAllDuplicates() {
-        Integer [] numbers = {5,6,7,8,5};
+        Integer[] numbers = {5, 6, 7, 8, 5};
 
         List<Integer> integers = Arrays.stream(numbers)
                 .distinct()
@@ -105,11 +120,11 @@ public class Main {
     }
 
     /**
-     *  Join string
+     * Join string
      */
     private static void joinString() {
 
-        List<String> joinExample = Arrays.asList("1","2","3","4");
+        List<String> joinExample = Arrays.asList("1", "2", "3", "4");
 
         String join = String.join("-", joinExample);
 
@@ -133,16 +148,16 @@ public class Main {
      * calculate the average of a list of integers
      */
     private static void calculateAverage() {
-        int [] numbersAverage = {1,2,5,7};
+        int[] numbersAverage = {1, 2, 5, 7};
         double average = Arrays.stream(numbersAverage).average().getAsDouble();
-        System.out.println("Average: "+average);
+        System.out.println("Average: " + average);
     }
 
     /**
      * Find all elements from an array who starts with 1
      */
     private static void findAllElementsWhoStartsWith() {
-        Integer [] numbersArray = { 1, 34, 25, 15, 56, 111, 25 };
+        Integer[] numbersArray = {1, 34, 25, 15, 56, 111, 25};
 
         List<Integer> allElementsWhoStartsWith = Arrays.stream(numbersArray)
                 .filter(x -> x.toString().startsWith("1"))
@@ -155,7 +170,7 @@ public class Main {
      */
     private static void longestString() {
 
-        String [] strArray = {"i", "love", "programming", "in", "java"};
+        String[] strArray = {"i", "love", "programming", "in", "java"};
 
         String longestString = Arrays.stream(strArray)
                 .reduce((x, y) -> x.length() > y.length() ? x : y)
@@ -169,7 +184,7 @@ public class Main {
      */
     private static void secondHighestNumber() {
 
-        int [] numbers = {1,3,14,24,35,56,68,23};
+        int[] numbers = {1, 3, 14, 24, 35, 56, 68, 23};
 
         Integer sencondHighestNumber = Arrays.stream(numbers)
                 .boxed()
@@ -236,11 +251,11 @@ public class Main {
      */
     private static void sumOfNumbersGrouped() {
 
-        int [] numbers = {1,3,14,24,35,56,68,23,23};
+        int[] numbers = {1, 3, 14, 24, 35, 56, 68, 23, 23};
 
         Map<Integer, Integer> sumOfNumbersGrouped = Arrays.stream(numbers)
                 .boxed()
-                .collect(Collectors.groupingBy(Function.identity(),Collectors.summingInt(Integer::intValue)));
+                .collect(Collectors.groupingBy(Function.identity(), Collectors.summingInt(Integer::intValue)));
 
         System.out.println(sumOfNumbersGrouped);
     }
