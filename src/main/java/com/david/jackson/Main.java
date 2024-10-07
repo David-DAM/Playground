@@ -1,7 +1,6 @@
 package com.david.jackson;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.javafaker.Faker;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -10,24 +9,24 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
+import java.util.Random;
 
 public class Main {
     public static void main(String[] args) throws IOException {
 
         String PATH_FILE = "src/main/java/com/david/jackson/products_locations.json";
 
-        Faker faker = new Faker(Locale.forLanguageTag("es-ES"));
-
         FeatureCollection featureCollection = new FeatureCollection();
 
         List<Feature> featureList = new ArrayList<>();
 
-        for (int i = 0; i < 5; i++) {
+        Random random = new Random();
 
-            Double latitude = Double.parseDouble(faker.address().latitude().replaceAll(",", "."));
+        for (int i = 0; i < 15; i++) {
 
-            Double longitude = Double.parseDouble(faker.address().longitude().replaceAll(",", "."));
+            Double latitude = random.doubles(0, 90).findFirst().getAsDouble();
+
+            Double longitude = random.doubles(0, 90).findFirst().getAsDouble();
 
             Feature feature = new Feature();
 
