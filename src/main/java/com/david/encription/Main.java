@@ -1,8 +1,14 @@
 package com.david.encription;
 
-import javax.crypto.*;
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.SecretKeySpec;
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
@@ -12,25 +18,25 @@ public class Main {
     private static final String ALGORITHM = "AES";
     private static final String TRANSFORMATION = "AES";
     private static final String KEY = "7d2dda0f-6acf-4b";
-    private static final String FILE_DECRYPTED_PATH = "src/encription/file.txt";
-    private static final String FILE_ENCRYPTED_PATH = "src/encription/file.encrypted";
+    private static final String FILE_DECRYPTED_PATH = "src/main/java/com/david/encription/file.txt";
+    private static final String FILE_ENCRYPTED_PATH = "src/main/java/com/david/encription/file.encrypted";
 
     public static void main(String[] args) throws NoSuchAlgorithmException {
 
-        encrypt(KEY,new File(FILE_DECRYPTED_PATH),new File(FILE_ENCRYPTED_PATH));
-        //decrypt(KEY,new File(FILE_ENCRYPTED_PATH),new File(FILE_DECRYPTED_PATH));
+        //encrypt(KEY, new File(FILE_DECRYPTED_PATH), new File(FILE_ENCRYPTED_PATH));
+        decrypt(KEY, new File(FILE_ENCRYPTED_PATH), new File(FILE_DECRYPTED_PATH));
 
     }
 
-    public static void encrypt(String key, File inputFile, File outputFile){
+    public static void encrypt(String key, File inputFile, File outputFile) {
         doCrypto(Cipher.ENCRYPT_MODE, key, inputFile, outputFile);
     }
 
-    public static void decrypt(String key, File inputFile, File outputFile){
+    public static void decrypt(String key, File inputFile, File outputFile) {
         doCrypto(Cipher.DECRYPT_MODE, key, inputFile, outputFile);
     }
 
-    private static void doCrypto(int cipherMode, String key, File inputFile, File outputFile)  {
+    private static void doCrypto(int cipherMode, String key, File inputFile, File outputFile) {
         try {
             Key secretKey = new SecretKeySpec(key.getBytes(), ALGORITHM);
             Cipher cipher = Cipher.getInstance(TRANSFORMATION);

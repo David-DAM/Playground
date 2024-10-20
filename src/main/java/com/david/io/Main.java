@@ -10,8 +10,8 @@ import static java.nio.file.StandardOpenOption.APPEND;
 
 public class Main {
 
-    final static String PATH_FILE = "src/io/test.txt";
-    final static String PATH_DIRECTORY = "src/io/";
+    final static String PATH_FILE = "src/main/java/com/david/io/test.txt";
+    final static String PATH_DIRECTORY = "src/main/java/com/david/io/";
 
     public static void main(String[] args) {
 
@@ -21,7 +21,7 @@ public class Main {
             //writeNewLines(Arrays.asList("test 4", "test 5"));
             readAllFilesInDirectory();
 
-        }catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
