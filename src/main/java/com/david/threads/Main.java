@@ -4,11 +4,30 @@ import java.util.concurrent.CompletableFuture;
 
 public class Main {
     public static void main(String[] args) {
-
+        
     }
 
     private static void asyncTasks() {
-        CompletableFuture.runAsync(() -> System.out.print("Running"));
+
+        CompletableFuture<Void> task1 = CompletableFuture.runAsync(() -> {
+
+            System.out.println("Running task 1");
+
+            for (int i = 0; i < 10; i++) {
+                System.out.println("Background task: " + i);
+            }
+
+            System.out.println("Task 1 completed");
+        });
+
+        CompletableFuture<Void> task2 = CompletableFuture.runAsync(() -> {
+
+            System.out.println("Running task 2");
+
+            System.out.println("Task 2 completed");
+        });
+
+        CompletableFuture.allOf(task1, task2).join();
     }
 
     private static void standardThread() {
