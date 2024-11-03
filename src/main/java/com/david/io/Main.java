@@ -1,10 +1,12 @@
 package com.david.io;
 
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.zip.Deflater;
+import java.util.zip.GZIPOutputStream;
 
 import static java.nio.file.StandardOpenOption.APPEND;
 
@@ -15,14 +17,35 @@ public class Main {
 
     public static void main(String[] args) {
 
+
+    }
+
+    private static void compressFileToGzip(String data) throws IOException {
+
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+
         try {
-            //readAllLines();
-            //writeNewLine("test 3");
-            //writeNewLines(Arrays.asList("test 4", "test 5"));
-            readAllFilesInDirectory();
+            GZIPOutputStream gzipOutputStream = new GZIPOutputStream(byteArrayOutputStream, Deflater.BEST_COMPRESSION);
+
+            Writer writer = new OutputStreamWriter(gzipOutputStream);
+
+            writer.write(data);
+            writer.flush();
+
+            gzipOutputStream.flush();
+            gzipOutputStream.finish();
+
+            byte[] bytes = byteArrayOutputStream.toByteArray();
+
+            ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytes);
+
+            //use binary data to store in buckets or whatever
+
+            byteArrayOutputStream.close();
+            byteArrayInputStream.close();
 
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 
