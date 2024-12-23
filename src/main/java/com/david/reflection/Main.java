@@ -13,11 +13,11 @@ public class Main {
         UserCreated userCreated = new UserCreated();
         //showUserData(userCreated);
 
-        List<EventConsumer> events = new ArrayList<>();
+        List<EventConsumer<? extends SpecificRecord>> events = new ArrayList<>();
         events.add(new UserCreatedUseCase());
         events.add(new ProductCreatedUseCase());
 
-        Map<String, EventConsumer> eventConsumerMap = events.stream().collect(Collectors.toMap(
+        Map<String, EventConsumer<? extends SpecificRecord>> eventConsumerMap = events.stream().collect(Collectors.toMap(
                 x -> ((ParameterizedType) x.getClass().getGenericInterfaces()[0]).getActualTypeArguments()[0].getTypeName(),
                 Function.identity()
         ));
