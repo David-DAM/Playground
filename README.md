@@ -13,7 +13,6 @@ multithreading, bibliotecas populares, patrones de diseño, programación orient
 - [Ejercicios Disponibles](#ejercicios-disponibles)
 - [Ejecución](#ejecución)
 - [Contribuciones](#contribuciones)
-- [Licencia](#licencia)
 
 ---
 
