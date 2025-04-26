@@ -14,9 +14,10 @@ public class Main {
 
     final static String PATH_FILE = "src/main/java/com/david/io/test.txt";
     final static String PATH_DIRECTORY = "src/main/java/com/david/io/";
+    final static int BUFFER_SIZE = 1024;
 
-    public static void main(String[] args) {
-
+    public static void main(String[] args) throws IOException {
+        readAllFilesInDirectory();
 
     }
 
@@ -72,6 +73,35 @@ public class Main {
         Path file = Paths.get(PATH_FILE);
 
         Files.write(file, newLines, APPEND);
+    }
+
+    public static void writeBytesByChunks(byte[] data) throws IOException {
+        try (BufferedOutputStream outputStream = new BufferedOutputStream(
+                new FileOutputStream(PATH_FILE))) {
+            int bytesWritten = 0;
+            while (bytesWritten < data.length) {
+                int remaining = data.length - bytesWritten;
+                int chunkSize = Math.min(BUFFER_SIZE, remaining);
+                outputStream.write(data, bytesWritten, chunkSize);
+                outputStream.flush();
+                bytesWritten += chunkSize;
+            }
+        }
+    }
+
+    public static byte[] readFileWithBytes() throws IOException {
+        File file = new File(PATH_FILE);
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+        try (BufferedInputStream bufferedInputStream = new BufferedInputStream(new FileInputStream(file))) {
+            byte[] buffer = new byte[BUFFER_SIZE];
+            int bytesRead;
+            while ((bytesRead = bufferedInputStream.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, bytesRead);
+            }
+        }
+
+        return outputStream.toByteArray();
     }
 
     public static void readAllFilesInDirectory() throws IOException {
