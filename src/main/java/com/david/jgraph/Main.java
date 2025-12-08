@@ -1,12 +1,13 @@
 import org.jgrapht.Graph;
 import org.jgrapht.GraphPath;
 import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
-import org.jgrapht.graph.DefaultEdge;
-import org.jgrapht.graph.SimpleDirectedGraph;
+import org.jgrapht.graph.DefaultWeightedEdge;
+import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 
 void main() {
     // 1. Create a graph
-    Graph<String, DefaultEdge> cityGraph = new SimpleDirectedGraph<>(DefaultEdge.class);
+    Graph<String, DefaultWeightedEdge> cityGraph =
+            new SimpleDirectedWeightedGraph<>(DefaultWeightedEdge.class);
 
     // 2. Add nodes
     cityGraph.addVertex("Madrid");
@@ -16,10 +17,25 @@ void main() {
     cityGraph.addVertex("Sevilla");
 
     // 3. Add connections
-    cityGraph.addEdge("Madrid", "Toledo");
-    cityGraph.addEdge("Toledo", "Ciudad Real");
-    cityGraph.addEdge("Ciudad Real", "Valencia");
-    cityGraph.addEdge("Madrid", "Sevilla");
+    cityGraph.setEdgeWeight(
+            cityGraph.addEdge("Madrid", "Toledo"),
+            75
+    );
+
+    cityGraph.setEdgeWeight(
+            cityGraph.addEdge("Toledo", "Ciudad Real"),
+            120
+    );
+
+    cityGraph.setEdgeWeight(
+            cityGraph.addEdge("Ciudad Real", "Valencia"),
+            220
+    );
+
+    cityGraph.setEdgeWeight(
+            cityGraph.addEdge("Madrid", "Sevilla"),
+            530
+    );
 
     // 4. Path between two cities
     String originCity = "Madrid";
@@ -27,13 +43,15 @@ void main() {
 
     System.out.println("Finding path from " + originCity + " to " + destinationCity);
 
-    GraphPath<String, DefaultEdge> path =
-            DijkstraShortestPath.findPathBetween(cityGraph, originCity, destinationCity);
+    var dijkstra = new DijkstraShortestPath<>(cityGraph);
+
+    GraphPath<String, DefaultWeightedEdge> path =
+            dijkstra.getPath(originCity, destinationCity);
 
     // 5. Show result
     if (path != null) {
-        System.out.println("Path found: " + path.getVertexList());
-    } else {
-        System.out.println("There is no possible path between those cities.");
+        System.out.println("Ruta óptima: " + path.getVertexList());
+        System.out.println("Distancia total: " + path.getWeight() + " km");
     }
+
 }
