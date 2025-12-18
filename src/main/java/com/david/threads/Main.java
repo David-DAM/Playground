@@ -1,13 +1,62 @@
 package com.david.threads;
 
 import java.util.concurrent.*;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class Main {
     public static void main(String[] args) {
-        
+       
     }
 
-    private static void executorService() {
+    private static void synchronizedThreadPoolExecutor() {
+
+        try (ExecutorService executorService = Executors.newFixedThreadPool(4)) {
+
+            for (int i = 0; i < 10; i++)
+                executorService.submit(Main::access);
+
+            executorService.shutdown();
+        }
+    }
+
+    private static synchronized void access() {
+        System.out.println("Accessing shared resource");
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            System.out.println(e.getMessage());
+        }
+        System.out.println("Finished accessing shared resource");
+    }
+
+    private static void lockThreadPoolExecutor() {
+
+        try (ExecutorService executorService = Executors.newFixedThreadPool(4)) {
+            Lock lock = new ReentrantLock();
+            for (int i = 0; i < 10; i++)
+                executorService.submit(() -> accessLock(lock));
+
+            executorService.shutdown();
+        }
+    }
+
+    private static void accessLock(Lock lock) {
+        System.out.println("Trying to access shared resource");
+        lock.lock();
+        try {
+            System.out.println("Accessing shared resource");
+            Thread.sleep(1000);
+            System.out.println("Finished accessing shared resource");
+        } catch (InterruptedException e) {
+            System.out.println(e.getMessage());
+        } finally {
+            lock.unlock();
+        }
+        System.out.println("Finished trying to access shared resource");
+    }
+
+    private static void virtualThreadExecutor() {
 
         try (ExecutorService executorService = Executors.newVirtualThreadPerTaskExecutor()) {
 
