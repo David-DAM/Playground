@@ -1,38 +1,56 @@
 package com.david.threads.raft_log_replication;
 
 import java.util.List;
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.IntStream;
 
 public class RaftLogReplicationDemo {
 
-    static void main(String[] args) {
+    static void main(String[] args) throws InterruptedException {
 
-        List<Follower> followers = List.of(
-                new Follower(1),
-                new Follower(2),
-                new Follower(3)
+        ClusterState cluster = new ClusterState();
+
+        List<RaftNode> raftNodes = IntStream.rangeClosed(1, 7).boxed()
+                .map(integer -> new RaftNode(integer, cluster))
+                .toList();
+
+        ElectionService electionService =
+                new ElectionService(raftNodes, cluster);
+
+        electionService.start();
+
+        Thread.sleep(2000);
+
+        RaftNode leaderNode = raftNodes.stream()
+                .filter(n -> Role.LEADER.equals(n.getRole()))
+                .findFirst()
+                .orElseThrow();
+
+        RaftLeader raftLeader = new RaftLeader(
+                leaderNode,
+                raftNodes.stream()
+                        .filter(n -> n != leaderNode)
+                        .toList()
         );
 
-        Leader leader = new Leader(followers);
+        CountDownLatch latch = new CountDownLatch(1);
 
-        try (ExecutorService clients = Executors.newSingleThreadExecutor()) {
-            for (int i = 0; i < 10; i++) {
-                int finalI = i;
-                clients.submit(() -> leader.receiveCommand("CMD_" + finalI));
-            }
+        try (ScheduledExecutorService client = Executors.newSingleThreadScheduledExecutor()) {
 
-            clients.shutdown();
-            boolean termination = clients.awaitTermination(10, TimeUnit.SECONDS);
-            System.out.println("Termination status: " + termination);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            System.out.println("Client started");
+
+            client.scheduleAtFixedRate(
+                    () -> raftLeader.receiveCommand("CMD_" + System.nanoTime()),
+                    0,
+                    300,
+                    TimeUnit.MILLISECONDS
+            );
+
+            latch.await();
         }
-
-        leader.shutdown();
-
-        leader.printStatus();
     }
 }
 
