@@ -24,6 +24,7 @@ class Follower {
 
     public boolean append(LogEntry entry) {
 
+        if (Math.random() < 0.2) return false;
         log.put(entry.index(), entry);
         System.out.println("Follower " + id + " appended " + entry);
 

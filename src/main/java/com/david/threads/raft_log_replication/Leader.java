@@ -26,30 +26,20 @@ class Leader {
 
         System.out.println("\nLeader received: " + entry);
 
-        List<Future<Boolean>> futures = new ArrayList<>();
+        List<CompletableFuture<Boolean>> futures = new ArrayList<>();
 
         for (Follower follower : followers) {
-            futures.add(executor.submit(() -> {
-                boolean success = false;
-                while (!success) {
-                    success = follower.append(entry);
-                    if (!success) {
-                        System.out.println("Follower" + follower.getId() + " retrying " + entry);
-                        Thread.sleep(50); // retry
-                    }
-                }
-                return true;
-            }));
+            CompletableFuture<Boolean> future = new CompletableFuture<>();
+            futures.add(future);
+            scheduleAppend(follower, entry, future);
         }
 
-        int acks = 0;
-        for (Future<Boolean> future : futures) {
-            try {
-                if (future.get()) acks++;
-            } catch (InterruptedException | ExecutionException e) {
-                System.out.println(e.getMessage());
-            }
-        }
+        long deadline = System.currentTimeMillis() + 500;
+
+        long acks = futures.stream()
+                .map(f -> f.completeOnTimeout(false, deadline - System.currentTimeMillis(), TimeUnit.MILLISECONDS))
+                .mapToLong(f -> f.join() ? 1 : 0)
+                .sum() + 1;
 
         if (acks >= majority()) {
             commitIndex = Math.max(commitIndex, index);
@@ -59,47 +49,32 @@ class Leader {
         }
     }
 
-    private void scheduleAppend(Follower follower, LogEntry entry, AtomicInteger acks) {
-        Runnable task = () -> {
-            boolean success = follower.append(entry);
-            if (success) {
-                acks.incrementAndGet();
-            } else {
-                System.out.println("Follower" + follower.getId() + " retrying " + entry);
-                executor.schedule(() -> scheduleAppend(follower, entry, acks), 50, TimeUnit.MILLISECONDS);
+    private void scheduleAppend(Follower follower, LogEntry entry, CompletableFuture<Boolean> result) {
+        executor.execute(() -> {
+            if (result.isDone()) {
+                return;
             }
-        };
 
+            boolean success = follower.append(entry);
 
-//        Runnable task = new Runnable() {
-//            @Override
-//            public void run() {
-//                boolean success = follower.append(entry);
-//                if (success) {
-//                    acks.incrementAndGet();
-//                } else {
-//                    System.out.println("Follower" + follower.getId() + " retrying " + entry);
-//                    executor.schedule(this, 50, TimeUnit.MILLISECONDS); // retry programado
-//                }
-//            }
-//        };
-
-        executor.schedule(task, 0, TimeUnit.MILLISECONDS);
+            if (success) {
+                result.complete(true);
+            } else {
+                System.out.println("Follower " + follower.getId() + " retrying " + entry);
+                executor.schedule(
+                        () -> scheduleAppend(follower, entry, result),
+                        50,
+                        TimeUnit.MILLISECONDS
+                );
+            }
+        });
     }
 
     private int majority() {
         return (followers.size() / 2) + 1;
     }
 
-    int getCommitIndex() {
-        return commitIndex;
-    }
-
-    List<LogEntry> getLog() {
-        return new ArrayList<>(log);
-    }
-
-    void shutdown() {
+    public void shutdown() {
         executor.shutdown();
     }
 
