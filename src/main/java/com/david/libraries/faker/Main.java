@@ -1,4 +1,4 @@
-package com.david.faker;
+package com.david.libraries.faker;
 
 import com.david.design_patterns.builder.Person;
 import com.github.javafaker.Faker;
@@ -19,9 +19,9 @@ public class Main {
 
             String name = faker.name().firstName();
             String lastName = faker.name().lastName();
-            int age = faker.number().numberBetween(0,99);
+            int age = faker.number().numberBetween(0, 99);
             String phoneNumber = faker.phoneNumber().cellPhone();
-            double height = faker.number().randomDouble(2,1,2);
+            double height = faker.number().randomDouble(2, 1, 2);
 
             Person person = new Person.PersonBuilder()
                     .setName(name)
@@ -35,7 +35,6 @@ public class Main {
         }
 
         personList.forEach(System.out::println);
-
 
 
     }

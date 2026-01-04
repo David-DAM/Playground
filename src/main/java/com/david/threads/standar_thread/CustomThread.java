@@ -1,13 +1,13 @@
-package com.david.threads;
+package com.david.threads.standar_thread;
 
-public class CustomThread extends Thread{
+public class CustomThread extends Thread {
 
     public CustomThread(String name) {
         super(name);
     }
 
     @Override
-    public void run(){
+    public void run() {
         System.out.println("Start " + getName());
     }
 

@@ -1,4 +1,4 @@
-package com.david.jackson;
+package com.david.libraries.jackson;
 
 import java.util.List;
 import java.util.Objects;

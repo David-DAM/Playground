@@ -34,5 +34,5 @@ build/
 /out/production/Playground/**
 /src/main/java/com/david/io/test.txt
 /src/main/java/com/david/encription/file.encrypted
-/src/main/java/com/david/jackson/products_locations.json
+/src/main/java/com/david/libraries/jackson/products_locations.json
 /src/main/java/com/david/encription/file.txt
