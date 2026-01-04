@@ -17,7 +17,7 @@ public class RaftLogReplicationDemo {
 
         Leader leader = new Leader(followers);
 
-        try (ExecutorService clients = Executors.newFixedThreadPool(3)) {
+        try (ExecutorService clients = Executors.newSingleThreadExecutor()) {
             for (int i = 0; i < 10; i++) {
                 int finalI = i;
                 clients.submit(() -> leader.receiveCommand("CMD_" + finalI));
