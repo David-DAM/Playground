@@ -31,7 +31,7 @@ class Leader {
         for (Follower follower : followers) {
             CompletableFuture<Boolean> future = new CompletableFuture<>();
             futures.add(future);
-            scheduleAppend(follower, entry, future);
+            attemptAppend(follower, entry, future, 3);
         }
 
         long deadline = System.currentTimeMillis() + 500;
@@ -43,15 +43,15 @@ class Leader {
 
         if (acks >= majority()) {
             commitIndex = Math.max(commitIndex, index);
-            System.out.println("COMMITTED " + entry);
+            System.out.println("COMMITTED: " + entry);
         } else {
-            System.out.println("NOT COMMITTED " + entry);
+            System.out.println("NOT COMMITTED: " + entry);
         }
     }
 
-    private void scheduleAppend(Follower follower, LogEntry entry, CompletableFuture<Boolean> result) {
+    private void attemptAppend(Follower follower, LogEntry entry, CompletableFuture<Boolean> result, int retries) {
         executor.execute(() -> {
-            if (result.isDone()) {
+            if (retries <= 0 || result.isDone()) {
                 return;
             }
 
@@ -60,9 +60,9 @@ class Leader {
             if (success) {
                 result.complete(true);
             } else {
-                System.out.println("Follower " + follower.getId() + " retrying " + entry);
+                System.out.println("Follower: " + follower.getId() + " Retry: " + retries + " Entry: " + entry);
                 executor.schedule(
-                        () -> scheduleAppend(follower, entry, result),
+                        () -> attemptAppend(follower, entry, result, retries - 1),
                         50,
                         TimeUnit.MILLISECONDS
                 );

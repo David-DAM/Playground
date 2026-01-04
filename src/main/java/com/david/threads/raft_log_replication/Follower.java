@@ -26,7 +26,7 @@ class Follower {
 
         if (Math.random() < 0.2) return false;
         log.put(entry.index(), entry);
-        System.out.println("Follower " + id + " appended " + entry);
+        System.out.println("Follower: " + id + " appended: " + entry);
 
         return true;
     }
