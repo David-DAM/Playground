@@ -14,7 +14,7 @@ public class RaftLeader {
     private final TokenBucket tokenBucket;
     private final Queue<LogEntry> logMemoryQueue;
     private final List<RaftNode> raftNodes;
-    private final BlockingQueue<LogEntry> logFileQueue;
+    private final FileLogWriter fileLogWriter;
     private final ScheduledExecutorService scheduledExecutor;
     private final ExecutorService fileLogExecutor;
 
@@ -26,10 +26,9 @@ public class RaftLeader {
         this.logMemoryQueue = new ConcurrentLinkedQueue<>();
         this.scheduledExecutor = Executors.newScheduledThreadPool(5);
         this.fileLogExecutor = Executors.newSingleThreadExecutor();
-        this.tokenBucket = new TokenBucket();
 
-        this.logFileQueue = new LinkedBlockingQueue<>(1000);
-        FileLogWriter fileLogWriter = new FileLogWriter(logFileQueue);
+        this.tokenBucket = new TokenBucket();
+        this.fileLogWriter = new FileLogWriter();
 
         this.fileLogExecutor.submit(fileLogWriter);
         this.tokenBucket.run();
@@ -51,16 +50,7 @@ public class RaftLeader {
         LogEntry entry = new LogEntry(index, command);
         System.out.println("Leader received: " + entry);
 
-        boolean wasEntryAdded;
-        try {
-            wasEntryAdded = logFileQueue.offer(entry, 100, TimeUnit.MILLISECONDS);
-        } catch (InterruptedException e) {
-            System.out.printf("Interrupted while waiting for log file queue to accept entry: %s%n", entry);
-            throw new RuntimeException(e);
-        }
-        if (!wasEntryAdded) {
-            System.out.printf("Log file queue full, dropping entry: %s%n", entry);
-        }
+        fileLogWriter.append(entry);
 
         logMemoryQueue.add(entry);
 

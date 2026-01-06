@@ -39,7 +39,7 @@ public class RaftNode {
             System.out.printf("Follower: %d dropped: %s%n", id, entry);
             return false;
         }
-        logMap.put(entry.index(), entry);
+        logMap.put(entry.getIndex(), entry);
         System.out.printf("Follower: %d appended: %s%n", id, entry);
 
         return true;
