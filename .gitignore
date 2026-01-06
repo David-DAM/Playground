@@ -38,3 +38,4 @@ build/
 /src/main/resources/encryption/file.encrypted
 /src/main/resources/encryption/file.txt
 /src/main/resources/raft/log.txt
+/src/main/resources/raft/commit.txt

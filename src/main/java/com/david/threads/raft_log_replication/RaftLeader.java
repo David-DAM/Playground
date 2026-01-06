@@ -1,9 +1,11 @@
 package com.david.threads.raft_log_replication;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
-import java.util.concurrent.*;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class RaftLeader {
@@ -15,6 +17,7 @@ public class RaftLeader {
     private final Queue<LogEntry> logMemoryQueue;
     private final List<RaftNode> raftNodes;
     private final FileLogWriter fileLogWriter;
+    private final FileCommitWriter fileCommitWriter;
     private final ScheduledExecutorService scheduledExecutor;
     private final ExecutorService fileLogExecutor;
 
@@ -29,6 +32,7 @@ public class RaftLeader {
 
         this.tokenBucket = new TokenBucket();
         this.fileLogWriter = new FileLogWriter();
+        this.fileCommitWriter = new FileCommitWriter();
 
         this.fileLogExecutor.submit(fileLogWriter);
         this.tokenBucket.run();
@@ -54,52 +58,18 @@ public class RaftLeader {
 
         logMemoryQueue.add(entry);
 
-        List<CompletableFuture<Boolean>> futures = new ArrayList<>();
+        CommitTracker tracker = new CommitTracker(raftNodes.size());
 
-        raftNodes.forEach(raftNode -> {
-            CompletableFuture<Boolean> future = new CompletableFuture<>();
-            futures.add(future);
-            attemptAppend(raftNode, entry, future, 3);
-        });
+        raftNodes.stream()
+                .map(node -> new LogReplicator(scheduledExecutor, tracker, entry, node))
+                .forEach(LogReplicator::run);
 
-        long deadline = System.currentTimeMillis() + 500;
-
-        long acks = futures.stream()
-                .map(f -> f.completeOnTimeout(false, deadline - System.currentTimeMillis(), TimeUnit.MILLISECONDS))
-                .mapToLong(f -> f.join() ? 1 : 0)
-                .sum() + 1;
-
-        if (acks >= majority()) {
-            commitIndex = Math.max(commitIndex, index);
+        tracker.getCommitFuture().thenRun(() -> {
+            commitIndex = entry.index();
+            fileCommitWriter.truncate(commitIndex);
             System.out.printf("COMMITTED: %s%n", entry);
-        } else {
-            System.out.printf("NOT COMMITTED: %s%n", entry);
-        }
-    }
-
-    private void attemptAppend(RaftNode raftNode, LogEntry entry, CompletableFuture<Boolean> result, int retries) {
-        scheduledExecutor.execute(() -> {
-            if (retries <= 0 || result.isDone()) {
-                return;
-            }
-
-            boolean success = raftNode.append(entry);
-
-            if (success) {
-                result.complete(true);
-            } else {
-                System.out.printf("Follower: %d Retry: %d Entry: %s%n", raftNode.getId(), retries, entry);
-                scheduledExecutor.schedule(
-                        () -> attemptAppend(raftNode, entry, result, retries - 1),
-                        50,
-                        TimeUnit.MILLISECONDS
-                );
-            }
         });
-    }
 
-    private int majority() {
-        return (raftNodes.size() / 2) + 1;
     }
 
     public void shutdown() {

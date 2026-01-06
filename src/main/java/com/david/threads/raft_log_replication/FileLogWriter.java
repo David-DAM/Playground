@@ -1,6 +1,7 @@
 package com.david.threads.raft_log_replication;
 
 import java.io.BufferedWriter;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -10,6 +11,7 @@ import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
 
 public class FileLogWriter implements Runnable {
     private final Path path;
@@ -20,6 +22,19 @@ public class FileLogWriter implements Runnable {
         this.queue = new LinkedBlockingQueue<>(1000);
         this.path = Paths.get("src/main/resources/raft/log.txt");
         this.batch = new ArrayList<>(50);
+    }
+
+    public void append(LogEntry entry) {
+        boolean wasEntryAdded;
+        try {
+            wasEntryAdded = queue.offer(entry, 100, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException e) {
+            System.out.printf("Interrupted while waiting for log file queue to accept entry: %s%n", entry);
+            throw new RuntimeException(e);
+        }
+        if (!wasEntryAdded) {
+            System.out.printf("Log file queue full, dropping entry: %s%n", entry);
+        }
     }
 
     @Override
@@ -63,16 +78,13 @@ public class FileLogWriter implements Runnable {
         }
     }
 
-    public void append(LogEntry entry) {
-        boolean wasEntryAdded;
-        try {
-            wasEntryAdded = queue.offer(entry, 100, TimeUnit.MILLISECONDS);
-        } catch (InterruptedException e) {
-            System.out.printf("Interrupted while waiting for log file queue to accept entry: %s%n", entry);
+    private List<LogEntry> load() {
+
+        try (Stream<String> lines = Files.lines(path)) {
+            return lines.map(LogEntry::deserialize).toList();
+        } catch (IOException e) {
+            System.out.println("Error recovering log file");
             throw new RuntimeException(e);
-        }
-        if (!wasEntryAdded) {
-            System.out.printf("Log file queue full, dropping entry: %s%n", entry);
         }
     }
 }
