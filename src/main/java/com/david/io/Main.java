@@ -12,8 +12,8 @@ import static java.nio.file.StandardOpenOption.APPEND;
 
 public class Main {
 
-    final static String PATH_FILE = "src/main/java/com/david/io/test.txt";
-    final static String PATH_DIRECTORY = "src/main/java/com/david/io/";
+    final static String PATH_FILE = "src/main/resources/io/test.txt";
+    final static String PATH_DIRECTORY = "src/main/resources/io/";
     final static int BUFFER_SIZE = 1024;
 
     public static void main(String[] args) throws IOException {

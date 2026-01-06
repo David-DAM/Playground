@@ -14,7 +14,7 @@ import java.util.Random;
 public class Main {
     public static void main(String[] args) throws IOException {
 
-        String PATH_FILE = "src/main/java/com/david/jackson/products_locations.json";
+        String PATH_FILE = "src/main/resources/jackson/products_locations.json";
 
         FeatureCollection featureCollection = new FeatureCollection();
 

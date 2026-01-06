@@ -6,19 +6,30 @@ import java.util.Queue;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
-class RaftLeader {
+public class RaftLeader {
 
     private final RaftNode self;
-    private final Queue<LogEntry> log = new ConcurrentLinkedQueue<>();
-    private final AtomicInteger logIndex = new AtomicInteger(0);
+    private final AtomicInteger logIndex;
+    private int commitIndex;
+    private final Queue<LogEntry> logMemoryQueue;
     private final List<RaftNode> raftNodes;
-    private int commitIndex = -1;
-
-    private final ScheduledExecutorService executor = Executors.newScheduledThreadPool(5);
+    private final BlockingQueue<LogEntry> logFileQueue;
+    private final ScheduledExecutorService scheduledExecutor;
+    private final ExecutorService fileLogExecutor;
 
     RaftLeader(RaftNode self, List<RaftNode> raftNodes) {
         this.self = self;
         this.raftNodes = raftNodes;
+        this.logIndex = new AtomicInteger(0);
+        this.commitIndex = -1;
+        this.logMemoryQueue = new ConcurrentLinkedQueue<>();
+        this.scheduledExecutor = Executors.newScheduledThreadPool(5);
+        this.fileLogExecutor = Executors.newSingleThreadExecutor();
+
+        this.logFileQueue = new LinkedBlockingQueue<>();
+        FileLogWriter fileLogWriter = new FileLogWriter(logFileQueue);
+
+        this.fileLogExecutor.submit(fileLogWriter);
     }
 
     public void receiveCommand(String command) {
@@ -30,17 +41,20 @@ class RaftLeader {
 
         int index = logIndex.getAndIncrement();
         LogEntry entry = new LogEntry(index, command);
-        log.add(entry);
-
         System.out.println("\nLeader received: " + entry);
+
+        logMemoryQueue.add(entry);
+
+        boolean wasEntryAdded = logFileQueue.offer(entry);
+        System.out.println("Was entry added to log file queue: " + wasEntryAdded);
 
         List<CompletableFuture<Boolean>> futures = new ArrayList<>();
 
-        for (RaftNode raftNode : raftNodes) {
+        raftNodes.forEach(raftNode -> {
             CompletableFuture<Boolean> future = new CompletableFuture<>();
             futures.add(future);
             attemptAppend(raftNode, entry, future, 3);
-        }
+        });
 
         long deadline = System.currentTimeMillis() + 500;
 
@@ -58,7 +72,7 @@ class RaftLeader {
     }
 
     private void attemptAppend(RaftNode raftNode, LogEntry entry, CompletableFuture<Boolean> result, int retries) {
-        executor.execute(() -> {
+        scheduledExecutor.execute(() -> {
             if (retries <= 0 || result.isDone()) {
                 return;
             }
@@ -69,7 +83,7 @@ class RaftLeader {
                 result.complete(true);
             } else {
                 System.out.println("Follower: " + raftNode.getId() + " Retry: " + retries + " Entry: " + entry);
-                executor.schedule(
+                scheduledExecutor.schedule(
                         () -> attemptAppend(raftNode, entry, result, retries - 1),
                         50,
                         TimeUnit.MILLISECONDS
@@ -83,14 +97,15 @@ class RaftLeader {
     }
 
     public void shutdown() {
-        executor.shutdown();
+        scheduledExecutor.shutdown();
+        fileLogExecutor.shutdown();
     }
 
     public void printStatus() {
-        System.out.println("\nLeader log: " + log);
+        System.out.println("\nLeader log: " + logMemoryQueue);
         System.out.println("Commit index: " + commitIndex);
         for (int i = 0; i < raftNodes.size(); i++) {
-            System.out.println("Follower " + i + " log: " + raftNodes.get(i).getLog());
+            System.out.println("Follower " + i + " log: " + raftNodes.get(i).getLogMap());
         }
     }
 }

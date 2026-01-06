@@ -38,6 +38,17 @@ public class RaftLogReplicationDemo {
 
         CountDownLatch latch = new CountDownLatch(1);
 
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            System.out.println("\nShutting down...");
+
+            raftLeader.shutdown();
+            electionService.shutdown();
+            latch.countDown();
+
+            System.out.println("Shutdown done");
+            raftLeader.printStatus();
+        }));
+
         try (ScheduledExecutorService client = Executors.newSingleThreadScheduledExecutor()) {
 
             System.out.println("Client started");

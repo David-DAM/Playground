@@ -1,4 +1,4 @@
-package com.david.encription;
+package com.david.encryption;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -18,8 +18,8 @@ public class Main {
     private static final String ALGORITHM = "AES";
     private static final String TRANSFORMATION = "AES";
     private static final String KEY = "7d2dda0f-6acf-4b";
-    private static final String FILE_DECRYPTED_PATH = "src/main/java/com/david/encription/file.txt";
-    private static final String FILE_ENCRYPTED_PATH = "src/main/java/com/david/encription/file.encrypted";
+    private static final String FILE_DECRYPTED_PATH = "src/main/resources/encryption/file.txt";
+    private static final String FILE_ENCRYPTED_PATH = "src/main/resources/encryption/file.encrypted";
 
     public static void main(String[] args) throws NoSuchAlgorithmException {
 

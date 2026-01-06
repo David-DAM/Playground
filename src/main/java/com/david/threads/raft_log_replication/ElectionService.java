@@ -10,11 +10,12 @@ public class ElectionService {
 
     private final List<RaftNode> nodes;
     private final ClusterState cluster;
-    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+    private final ScheduledExecutorService scheduler;
 
     ElectionService(List<RaftNode> nodes, ClusterState cluster) {
         this.nodes = nodes;
         this.cluster = cluster;
+        this.scheduler = Executors.newScheduledThreadPool(1);
     }
 
     public void start() {
@@ -24,6 +25,10 @@ public class ElectionService {
                 100,
                 TimeUnit.MILLISECONDS
         );
+    }
+
+    public void shutdown() {
+        scheduler.shutdown();
     }
 
     private void checkElection() {

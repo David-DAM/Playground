@@ -31,8 +31,10 @@ build/
 
 ### VS Code ###
 .vscode/
-/out/production/Playground/**
-/src/main/java/com/david/io/test.txt
-/src/main/java/com/david/encription/file.encrypted
-/src/main/java/com/david/libraries/jackson/products_locations.json
-/src/main/java/com/david/encription/file.txt
+
+### Custom ###
+/src/main/resources/io/test.txt
+/src/main/resources/jackson/products_locations.json
+/src/main/resources/encryption/file.encrypted
+/src/main/resources/encryption/file.txt
+/src/main/resources/raft/log.txt

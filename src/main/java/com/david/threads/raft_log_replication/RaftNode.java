@@ -5,23 +5,24 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentSkipListMap;
 
-class RaftNode {
+public class RaftNode {
 
-    private final Map<Integer, LogEntry> log = new ConcurrentSkipListMap<>();
+    private final Map<Integer, LogEntry> logMap;
     private final int id;
-
     private final ClusterState cluster;
-
-    private volatile Role role = Role.FOLLOWER;
-    private volatile long lastHeartbeat = System.currentTimeMillis();
+    private volatile Role role;
+    private volatile long lastHeartbeat;
 
     RaftNode(int id, ClusterState cluster) {
         this.id = id;
         this.cluster = cluster;
+        this.logMap = new ConcurrentSkipListMap<>();
+        this.role = Role.FOLLOWER;
+        this.lastHeartbeat = System.currentTimeMillis();
     }
 
-    public List<LogEntry> getLog() {
-        return new ArrayList<>(log.values());
+    public List<LogEntry> getLogMap() {
+        return new ArrayList<>(logMap.values());
     }
 
     public int getId() {
@@ -34,8 +35,11 @@ class RaftNode {
 
     public boolean append(LogEntry entry) {
 
-        if (Math.random() < 0.2) return false;
-        log.put(entry.index(), entry);
+        if (Math.random() < 0.2) {
+            System.out.println("Follower: " + id + " dropped: " + entry);
+            return false;
+        }
+        logMap.put(entry.index(), entry);
         System.out.println("Follower: " + id + " appended: " + entry);
 
         return true;
