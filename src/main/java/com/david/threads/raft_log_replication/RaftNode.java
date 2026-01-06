@@ -13,7 +13,7 @@ public class RaftNode {
     private volatile Role role;
     private volatile long lastHeartbeat;
 
-    RaftNode(int id, ClusterState cluster) {
+    public RaftNode(int id, ClusterState cluster) {
         this.id = id;
         this.cluster = cluster;
         this.logMap = new ConcurrentSkipListMap<>();
@@ -45,23 +45,23 @@ public class RaftNode {
         return true;
     }
 
-    void becomeLeader(int term) {
+    public void becomeLeader(int term) {
         role = Role.LEADER;
         cluster.leaderId.set(id);
         System.out.println("Node " + id + " became LEADER (term " + term + ")");
     }
 
-    void becomeFollower(int term) {
+    public void becomeFollower(int term) {
         role = Role.FOLLOWER;
         cluster.currentTerm.set(term);
         cluster.votedFor.set(-1);
     }
 
-    void heartbeat() {
+    public void heartbeat() {
         lastHeartbeat = System.currentTimeMillis();
     }
 
-    boolean electionTimeout(long timeoutMs) {
+    public boolean electionTimeout(long timeoutMs) {
         return System.currentTimeMillis() - lastHeartbeat > timeoutMs;
     }
 }

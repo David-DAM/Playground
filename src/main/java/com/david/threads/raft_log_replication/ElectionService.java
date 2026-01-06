@@ -6,19 +6,20 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
-public class ElectionService {
+public class ElectionService implements Runnable {
 
     private final List<RaftNode> nodes;
     private final ClusterState cluster;
     private final ScheduledExecutorService scheduler;
 
-    ElectionService(List<RaftNode> nodes, ClusterState cluster) {
+    public ElectionService(List<RaftNode> nodes, ClusterState cluster) {
         this.nodes = nodes;
         this.cluster = cluster;
         this.scheduler = Executors.newScheduledThreadPool(1);
     }
 
-    public void start() {
+    @Override
+    public void run() {
         scheduler.scheduleAtFixedRate(
                 this::checkElection,
                 100,

@@ -11,6 +11,7 @@ public class RaftLeader {
     private final RaftNode self;
     private final AtomicInteger logIndex;
     private int commitIndex;
+    private final TokenBucket tokenBucket;
     private final Queue<LogEntry> logMemoryQueue;
     private final List<RaftNode> raftNodes;
     private final BlockingQueue<LogEntry> logFileQueue;
@@ -25,11 +26,13 @@ public class RaftLeader {
         this.logMemoryQueue = new ConcurrentLinkedQueue<>();
         this.scheduledExecutor = Executors.newScheduledThreadPool(5);
         this.fileLogExecutor = Executors.newSingleThreadExecutor();
+        this.tokenBucket = new TokenBucket();
 
         this.logFileQueue = new LinkedBlockingQueue<>();
         FileLogWriter fileLogWriter = new FileLogWriter(logFileQueue);
 
         this.fileLogExecutor.submit(fileLogWriter);
+        this.tokenBucket.run();
     }
 
     public void receiveCommand(String command) {
@@ -39,14 +42,19 @@ public class RaftLeader {
             return;
         }
 
+        if (!tokenBucket.hasTokens()) {
+            System.out.println("Not enough tokens, rejecting command");
+            return;
+        }
+
         int index = logIndex.getAndIncrement();
         LogEntry entry = new LogEntry(index, command);
-        System.out.println("\nLeader received: " + entry);
-
-        logMemoryQueue.add(entry);
+        System.out.println("Leader received: " + entry);
 
         boolean wasEntryAdded = logFileQueue.offer(entry);
         System.out.println("Was entry added to log file queue: " + wasEntryAdded);
+
+        logMemoryQueue.add(entry);
 
         List<CompletableFuture<Boolean>> futures = new ArrayList<>();
 
@@ -99,6 +107,7 @@ public class RaftLeader {
     public void shutdown() {
         scheduledExecutor.shutdown();
         fileLogExecutor.shutdown();
+        tokenBucket.shutdown();
     }
 
     public void printStatus() {

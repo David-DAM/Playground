@@ -13,14 +13,13 @@ public class RaftLogReplicationDemo {
 
         ClusterState cluster = new ClusterState();
 
-        List<RaftNode> raftNodes = IntStream.rangeClosed(1, 7).boxed()
+        List<RaftNode> raftNodes = IntStream.rangeClosed(1, 7)
+                .boxed()
                 .map(integer -> new RaftNode(integer, cluster))
                 .toList();
 
-        ElectionService electionService =
-                new ElectionService(raftNodes, cluster);
-
-        electionService.start();
+        ElectionService electionService = new ElectionService(raftNodes, cluster);
+        electionService.run();
 
         Thread.sleep(2000);
 
