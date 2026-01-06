@@ -38,7 +38,7 @@ public class RaftLogReplicationDemo {
         CountDownLatch latch = new CountDownLatch(1);
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            System.out.println("\nShutting down...");
+            System.out.println("Shutting down...");
 
             raftLeader.shutdown();
             electionService.shutdown();

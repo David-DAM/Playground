@@ -28,7 +28,7 @@ public class RaftLeader {
         this.fileLogExecutor = Executors.newSingleThreadExecutor();
         this.tokenBucket = new TokenBucket();
 
-        this.logFileQueue = new LinkedBlockingQueue<>();
+        this.logFileQueue = new LinkedBlockingQueue<>(1000);
         FileLogWriter fileLogWriter = new FileLogWriter(logFileQueue);
 
         this.fileLogExecutor.submit(fileLogWriter);
@@ -51,8 +51,16 @@ public class RaftLeader {
         LogEntry entry = new LogEntry(index, command);
         System.out.println("Leader received: " + entry);
 
-        boolean wasEntryAdded = logFileQueue.offer(entry);
-        System.out.println("Was entry added to log file queue: " + wasEntryAdded);
+        boolean wasEntryAdded;
+        try {
+            wasEntryAdded = logFileQueue.offer(entry, 100, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException e) {
+            System.out.printf("Interrupted while waiting for log file queue to accept entry: %s%n", entry);
+            throw new RuntimeException(e);
+        }
+        if (!wasEntryAdded) {
+            System.out.printf("Log file queue full, dropping entry: %s%n", entry);
+        }
 
         logMemoryQueue.add(entry);
 
@@ -73,9 +81,9 @@ public class RaftLeader {
 
         if (acks >= majority()) {
             commitIndex = Math.max(commitIndex, index);
-            System.out.println("COMMITTED: " + entry);
+            System.out.printf("COMMITTED: %s%n", entry);
         } else {
-            System.out.println("NOT COMMITTED: " + entry);
+            System.out.printf("NOT COMMITTED: %s%n", entry);
         }
     }
 
@@ -90,7 +98,7 @@ public class RaftLeader {
             if (success) {
                 result.complete(true);
             } else {
-                System.out.println("Follower: " + raftNode.getId() + " Retry: " + retries + " Entry: " + entry);
+                System.out.printf("Follower: %d Retry: %d Entry: %s%n", raftNode.getId(), retries, entry);
                 scheduledExecutor.schedule(
                         () -> attemptAppend(raftNode, entry, result, retries - 1),
                         50,
@@ -111,10 +119,10 @@ public class RaftLeader {
     }
 
     public void printStatus() {
-        System.out.println("\nLeader log: " + logMemoryQueue);
-        System.out.println("Commit index: " + commitIndex);
+        System.out.printf("Leader log: %s%n", logMemoryQueue);
+        System.out.printf("Commit index: %d%n", commitIndex);
         for (int i = 0; i < raftNodes.size(); i++) {
-            System.out.println("Follower " + i + " log: " + raftNodes.get(i).getLogMap());
+            System.out.printf("Follower %d log: %s%n", i, raftNodes.get(i).getLogMap());
         }
     }
 }

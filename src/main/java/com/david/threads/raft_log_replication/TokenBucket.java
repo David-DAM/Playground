@@ -19,7 +19,7 @@ public class TokenBucket implements Runnable {
         executor.scheduleAtFixedRate(() -> {
             long newTokenCount = tokens.updateAndGet(v -> Math.min(Math.abs(v + 1), 10));
             System.out.println("Tokens: " + newTokenCount);
-        }, 0, 500, TimeUnit.MILLISECONDS);
+        }, 0, 300, TimeUnit.MILLISECONDS);
     }
 
     public boolean hasTokens() {

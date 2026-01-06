@@ -36,11 +36,11 @@ public class RaftNode {
     public boolean append(LogEntry entry) {
 
         if (Math.random() < 0.2) {
-            System.out.println("Follower: " + id + " dropped: " + entry);
+            System.out.printf("Follower: %d dropped: %s%n", id, entry);
             return false;
         }
         logMap.put(entry.index(), entry);
-        System.out.println("Follower: " + id + " appended: " + entry);
+        System.out.printf("Follower: %d appended: %s%n", id, entry);
 
         return true;
     }
@@ -48,7 +48,7 @@ public class RaftNode {
     public void becomeLeader(int term) {
         role = Role.LEADER;
         cluster.leaderId.set(id);
-        System.out.println("Node " + id + " became LEADER (term " + term + ")");
+        System.out.printf("Node %d became LEADER (term %d)%n", id, term);
     }
 
     public void becomeFollower(int term) {

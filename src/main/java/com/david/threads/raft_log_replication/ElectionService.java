@@ -41,7 +41,7 @@ public class ElectionService implements Runnable {
             }
 
             if (node.electionTimeout(randomTimeout())) {
-                System.out.println("Election timeout for " + node.getId());
+                System.out.printf("Election timeout for %d%n", node.getId());
                 tryElect(node);
             }
         }
