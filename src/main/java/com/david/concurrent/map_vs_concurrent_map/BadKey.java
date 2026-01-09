@@ -1,4 +1,4 @@
-package com.david.threads.map_vs_concurrent_map;
+package com.david.concurrent.map_vs_concurrent_map;
 
 class BadKey {
     private final int id;

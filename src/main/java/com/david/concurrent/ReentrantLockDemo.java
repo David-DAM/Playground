@@ -1,4 +1,4 @@
-package com.david.threads;
+package com.david.concurrent;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.locks.Lock;

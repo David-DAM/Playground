@@ -1,4 +1,4 @@
-package com.david.threads.standar_thread;
+package com.david.concurrent.standar_thread;
 
 public class CustomThread extends Thread {
 

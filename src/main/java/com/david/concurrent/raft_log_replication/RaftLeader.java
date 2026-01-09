@@ -1,4 +1,4 @@
-package com.david.threads.raft_log_replication;
+package com.david.concurrent.raft_log_replication;
 
 import java.util.List;
 import java.util.Queue;

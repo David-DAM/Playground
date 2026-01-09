@@ -1,4 +1,4 @@
-package com.david.threads;
+package com.david.concurrent;
 
 public class SynchronizedMethodDemo {
 
