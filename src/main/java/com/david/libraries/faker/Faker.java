@@ -1,17 +1,16 @@
 package com.david.libraries.faker;
 
 import com.david.design_patterns.builder.Person;
-import com.github.javafaker.Faker;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class Main {
+public class Faker {
 
-    public static void main(String[] args) {
+    static void main(String[] args) {
 
-        Faker faker = new Faker(Locale.forLanguageTag("es-ES"));
+        com.github.javafaker.Faker faker = new com.github.javafaker.Faker(Locale.forLanguageTag("es-ES"));
 
         List<Person> personList = new ArrayList<>();
 

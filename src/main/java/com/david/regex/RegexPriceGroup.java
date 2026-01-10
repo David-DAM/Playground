@@ -3,7 +3,7 @@ package com.david.regex;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class RegexPriceGroupDemo {
+public class RegexPriceGroup {
     static void main(String[] args) {
 
         //This pattern matches any price in dollars or euros

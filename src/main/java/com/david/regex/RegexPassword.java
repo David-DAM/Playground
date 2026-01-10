@@ -3,7 +3,7 @@ package com.david.regex;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class RegexPasswordDemo {
+public class RegexPassword {
     static void main(String[] args) {
         //At least one uppercase letter, one lowercase letter, one digit, one special character and minimum 8 characters
         Pattern passwordPattern = Pattern.compile("^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$");

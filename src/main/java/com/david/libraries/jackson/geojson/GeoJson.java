@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class Main {
+public class GeoJson {
     public static void main(String[] args) throws IOException {
 
         String PATH_FILE = "src/main/resources/jackson/products_locations.json";
