@@ -1,4 +1,4 @@
-package com.david.design_patterns.chain_responsability;
+package com.david.design_patterns.chain_responsibility;
 
 public class EmailValidator extends AbstractHandler {
 

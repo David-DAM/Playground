@@ -1,7 +1,7 @@
 package com.david.design_patterns.adapter;
 
-public class Main {
-    public static void main(String[] args) {
+public class Adapter {
+    static void main(String[] args) {
         // Round fits round, no surprise.
         RoundHole hole = new RoundHole(5);
         RoundPeg rpeg = new RoundPeg(5);

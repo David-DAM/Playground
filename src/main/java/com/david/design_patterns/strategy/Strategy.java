@@ -6,9 +6,9 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class Main {
+public class Strategy {
 
-    public static void main(String[] args) {
+    static void main(String[] args) {
 
         //In a spring application we can inject that list in the constructor automatically
         List<IPayment> list = new ArrayList<>();

@@ -1,7 +1,7 @@
 package com.david.design_patterns.builder;
 
-public class Main {
-    public static void main(String[] args) {
+public class Builder {
+    static void main(String[] args) {
         Person person = new Person.PersonBuilder()
                 .setHeight(1.80)
                 .setAge(23)

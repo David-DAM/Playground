@@ -1,6 +1,6 @@
 package com.david.design_patterns.observer;
 
-public class Main {
+public class Observer {
     public static void main(String[] args) {
         NewsAgency newsAgency = new NewsAgency();
         NewsChannel newsChannel = new NewsChannel();

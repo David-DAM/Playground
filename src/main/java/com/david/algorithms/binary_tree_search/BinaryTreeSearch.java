@@ -1,6 +1,6 @@
 package com.david.algorithms.binary_tree_search;
 
-public class Main {
+public class BinaryTreeSearch {
 
     public static void main(String[] args) {
 
@@ -19,7 +19,7 @@ public class Main {
         System.out.println("Recorrido en orden:");
         tree.traverseInOrder(tree.root); // 3 4 5 6 7 8 9
         System.out.println();
-        
+
         tree.delete(4);
         System.out.println("Recorrido en orden después de eliminar 4:");
         tree.traverseInOrder(tree.root); // 3 5 6 7 8 9

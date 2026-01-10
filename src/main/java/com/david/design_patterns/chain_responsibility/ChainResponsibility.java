@@ -1,6 +1,6 @@
-package com.david.design_patterns.chain_responsability;
+package com.david.design_patterns.chain_responsibility;
 
-public class Main {
+public class ChainResponsibility {
     public static void main(String[] args) {
 
         var chain = UserValidatorChain.build();

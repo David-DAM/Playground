@@ -13,7 +13,7 @@ import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 
-public class Main {
+public class EncryptionExample {
 
     private static final String ALGORITHM = "AES";
     private static final String TRANSFORMATION = "AES";
