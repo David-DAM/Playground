@@ -1,4 +1,4 @@
-package com.david.libraries.jackson;
+package com.david.libraries.jackson.geojson;
 
 import java.util.List;
 import java.util.Objects;

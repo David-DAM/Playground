@@ -1,5 +1,9 @@
 package com.david.concurrent;
 
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.concurrent.CompletableFuture;
 
 public class CompletableFutureDemo {
@@ -20,6 +24,26 @@ public class CompletableFutureDemo {
 
         CompletableFuture.allOf(task1, task2).join();
         System.out.println("All tasks finished");
+
+        CompletableFuture<Void> getUser = CompletableFuture.supplyAsync(() -> 1)
+                .thenApply(Object::toString)
+                .thenCompose(x -> CompletableFuture.supplyAsync(() -> fetchUser(x)))
+                .thenAccept(System.out::println);
+
+        getUser.join();
+    }
+
+    private static String fetchUser(String x) {
+        try (var client = HttpClient.newHttpClient()) {
+            var response = client.send(HttpRequest.newBuilder()
+                            .uri(URI.create("https://jsonplaceholder.typicode.com/users/" + x))
+                            .GET()
+                            .build(),
+                    HttpResponse.BodyHandlers.ofString());
+            return response.body();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private static void sleep() {

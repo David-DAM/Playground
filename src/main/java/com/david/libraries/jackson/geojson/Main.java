@@ -1,4 +1,4 @@
-package com.david.libraries.jackson;
+package com.david.libraries.jackson.geojson;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
