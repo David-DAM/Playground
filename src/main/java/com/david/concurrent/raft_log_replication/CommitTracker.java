@@ -6,11 +6,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class CommitTracker {
 
     private final int majority;
-    private final AtomicInteger acks = new AtomicInteger(1);
-    private final CompletableFuture<Boolean> committed = new CompletableFuture<>();
+    private final AtomicInteger acks;
+    private final CompletableFuture<Boolean> committed;
 
     public CommitTracker(int clusterSize) {
         this.majority = clusterSize / 2 + 1;
+        this.acks = new AtomicInteger(1);
+        this.committed = new CompletableFuture<>();
     }
 
     public void ack() {

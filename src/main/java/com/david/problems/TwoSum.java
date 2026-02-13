@@ -1,41 +1,30 @@
 package com.david.problems;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public class TwoSum {
 
-    /**
-     * Given nums = [ 2,7,11,15 ] target = 9
-     * Because nums[0] + nums[1] = 9
-     * Return [0,1]
-     */
-    public static void main(String[] args) {
-
-        int [] nums = { 2,7,11,15 };
-
+    static void main() {
+        int[] nums = {2, 7, 11, 15};
         int target = 9;
-
-        int[] sum = twoSum(nums, target);
-
-        Arrays.stream(sum).forEach(System.out::println);
+        int[] result = twoSum(nums, target);
+        System.out.println(Arrays.toString(result));
     }
-    public static int[] twoSum(int[] nums, int target) {
 
-        List<Integer> index = new ArrayList<>();
+    public static int[] twoSum(int[] nums, int target) {
+        Map<Integer, Integer> map = new HashMap<>();
 
         for (int i = 0; i < nums.length; i++) {
+            int comp = target - nums[i];
+            if (map.containsKey(comp))
+                return new int[]{map.get(comp), i};
 
-            for (int j = 0; j < nums.length; j++) {
-
-                if (nums[i] + nums[j] == target ){
-                    index.add(i);
-                    index.add(j);
-                }
-            }
+            map.put(nums[i], i);
         }
 
-        Set<Integer> result = new LinkedHashSet<>(index);
-
-       return result.stream().mapToInt(Integer::intValue).toArray();
+        return new int[]{-1, -1};
     }
 }
+
