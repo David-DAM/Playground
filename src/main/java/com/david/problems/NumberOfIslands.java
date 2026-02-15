@@ -29,7 +29,7 @@ public class NumberOfIslands {
                 if (grid[x][y] == 1) {
                     numberOfIslands++;
                     dfs(x, y, grid);
-                    bfs(x, y, grid);
+                    //bfs(x, y, grid);
                 }
 
             }

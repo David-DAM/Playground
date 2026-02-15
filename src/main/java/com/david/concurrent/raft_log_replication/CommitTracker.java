@@ -21,7 +21,7 @@ public class CommitTracker {
         }
     }
 
-    CompletableFuture<Boolean> getCommitFuture() {
+    public CompletableFuture<Boolean> getCommitFuture() {
         return committed;
     }
 }

@@ -26,13 +26,13 @@ public class FileCommitWriter {
     }
 
     public int load() {
-        if (!Files.exists(path)) return -1;
+        if (!Files.exists(path)) return 0;
 
         try {
             String line = Files.readString(path);
             return Integer.parseInt(line.split("=")[1]);
         } catch (Exception e) {
-            return -1;
+            return 0;
         }
     }
 }

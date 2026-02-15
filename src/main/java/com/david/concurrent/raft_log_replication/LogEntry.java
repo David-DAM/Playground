@@ -9,9 +9,7 @@ public record LogEntry(int index, String command) {
     public static LogEntry deserialize(String line) {
         String[] split = line.split(";");
 
-        return new LogEntry(
-                Integer.parseInt(split[0]),
-                split[1]
+        return new LogEntry(Integer.parseInt(split[0]), split[1]
         );
     }
 }

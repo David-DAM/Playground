@@ -78,7 +78,7 @@ public class FileLogWriter implements Runnable {
         }
     }
 
-    private List<LogEntry> load() {
+    public List<LogEntry> load() {
 
         try (Stream<String> lines = Files.lines(path)) {
             return lines.map(LogEntry::deserialize).toList();

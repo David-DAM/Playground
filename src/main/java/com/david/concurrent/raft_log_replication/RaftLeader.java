@@ -21,12 +21,12 @@ public class RaftLeader {
     private final ScheduledExecutorService scheduledExecutor;
     private final ExecutorService fileLogExecutor;
 
-    RaftLeader(RaftNode self, List<RaftNode> raftNodes) {
+    RaftLeader(RaftNode self, List<RaftNode> raftNodes, List<LogEntry> logEntries, int commitIndex) {
         this.self = self;
         this.raftNodes = raftNodes;
-        this.logIndex = new AtomicInteger(0);
-        this.commitIndex = -1;
-        this.logMemoryQueue = new ConcurrentLinkedQueue<>();
+        this.logIndex = new AtomicInteger(commitIndex);
+        this.commitIndex = 0;
+        this.logMemoryQueue = new ConcurrentLinkedQueue<>(logEntries);
         this.scheduledExecutor = Executors.newScheduledThreadPool(5);
         this.fileLogExecutor = Executors.newSingleThreadExecutor();
 

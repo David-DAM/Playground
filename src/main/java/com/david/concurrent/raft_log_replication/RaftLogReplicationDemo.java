@@ -28,11 +28,21 @@ public class RaftLogReplicationDemo {
                 .findFirst()
                 .orElseThrow();
 
+        FileLogWriter fileLogWriter = new FileLogWriter();
+        FileCommitWriter fileCommitWriter = new FileCommitWriter();
+
+        List<RaftNode> followerNodes = raftNodes.stream()
+                .filter(n -> n != leaderNode)
+                .toList();
+
+        List<LogEntry> logEntries = fileLogWriter.load();
+        int commitIndex = fileCommitWriter.load();
+
         RaftLeader raftLeader = new RaftLeader(
                 leaderNode,
-                raftNodes.stream()
-                        .filter(n -> n != leaderNode)
-                        .toList()
+                followerNodes,
+                logEntries,
+                commitIndex
         );
 
         CountDownLatch latch = new CountDownLatch(1);
