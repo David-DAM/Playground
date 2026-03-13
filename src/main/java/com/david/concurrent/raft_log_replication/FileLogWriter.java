@@ -63,9 +63,9 @@ public class FileLogWriter implements Runnable {
                         System.out.printf("Writing to file log: %d elements%n", batch.size());
                         writer.flush();
                         lastFlush = now;
+                        batch.clear();
                     }
 
-                    batch.clear();
                 }
             }
 

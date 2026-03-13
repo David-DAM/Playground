@@ -1,67 +1,114 @@
 package com.david.encryption;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
+import javax.crypto.*;
+import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
-import java.security.Key;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 
 public class EncryptionExample {
 
     private static final String ALGORITHM = "AES";
-    private static final String TRANSFORMATION = "AES";
+    private static final String TRANSFORMATION = "AES/GCM/NoPadding";
     private static final String KEY = "7d2dda0f-6acf-4b";
+    private static final int AES_KEY_SIZE = 256;
+    private static final int GCM_IV_LENGTH = 12;
+    private static final int GCM_TAG_LENGTH = 128;
     private static final String FILE_DECRYPTED_PATH = "src/main/resources/encryption/file.txt";
     private static final String FILE_ENCRYPTED_PATH = "src/main/resources/encryption/file.encrypted";
 
-    public static void main(String[] args) throws NoSuchAlgorithmException {
-
-        //encrypt(KEY, new File(FILE_DECRYPTED_PATH), new File(FILE_ENCRYPTED_PATH));
-        decrypt(KEY, new File(FILE_ENCRYPTED_PATH), new File(FILE_DECRYPTED_PATH));
+    static void main(String[] args) {
+        SecretKey key = getKey();
+        encrypt(key, new File(FILE_DECRYPTED_PATH), new File(FILE_ENCRYPTED_PATH));
+        //decrypt(key, new File(FILE_ENCRYPTED_PATH), new File(FILE_DECRYPTED_PATH));
 
     }
 
-    public static void encrypt(String key, File inputFile, File outputFile) {
-        doCrypto(Cipher.ENCRYPT_MODE, key, inputFile, outputFile);
+    public static SecretKey getKey() {
+        return new SecretKeySpec(KEY.getBytes(), ALGORITHM);
     }
 
-    public static void decrypt(String key, File inputFile, File outputFile) {
-        doCrypto(Cipher.DECRYPT_MODE, key, inputFile, outputFile);
-    }
+    public static void encrypt(SecretKey key, File inputFile, File outputFile) {
+        try (
+                FileInputStream fis = new FileInputStream(inputFile);
+                FileOutputStream fos = new FileOutputStream(outputFile)
+        ) {
+            byte[] iv = new byte[GCM_IV_LENGTH];
+            new SecureRandom().nextBytes(iv);
 
-    private static void doCrypto(int cipherMode, String key, File inputFile, File outputFile) {
-        try {
-            Key secretKey = new SecretKeySpec(key.getBytes(), ALGORITHM);
             Cipher cipher = Cipher.getInstance(TRANSFORMATION);
-            cipher.init(cipherMode, secretKey);
+            GCMParameterSpec spec = new GCMParameterSpec(GCM_TAG_LENGTH, iv);
 
-            FileInputStream inputStream = new FileInputStream(inputFile);
+            cipher.init(Cipher.ENCRYPT_MODE, key, spec);
 
-            byte[] inputBytes = new byte[(int) inputFile.length()];
+            // Write IV at the start of the file
+            fos.write(iv);
 
-            inputStream.read(inputBytes);
+            byte[] buffer = new byte[8192];
+            int bytesRead;
 
-            byte[] outputBytes = cipher.doFinal(inputBytes);
+            while ((bytesRead = fis.read(buffer)) != -1) {
+                byte[] encrypted = cipher.update(buffer, 0, bytesRead);
 
-            FileOutputStream outputStream = new FileOutputStream(outputFile);
-            outputStream.write(outputBytes);
+                if (encrypted != null) {
+                    fos.write(encrypted);
+                }
+            }
 
-            inputStream.close();
-            outputStream.close();
+            byte[] finalBytes = cipher.doFinal();
 
-            inputFile.delete();
-
+            if (finalBytes != null) {
+                fos.write(finalBytes);
+            }
         } catch (NoSuchAlgorithmException | InvalidKeyException | BadPaddingException |
-                 IllegalBlockSizeException | IOException | NoSuchPaddingException ex) {
+                 IllegalBlockSizeException | IOException | InvalidAlgorithmParameterException |
+                 NoSuchPaddingException ex) {
             System.out.println("Error encrypting/decrypting file.txt: " + ex.getMessage());
         }
     }
+
+    public static void decrypt(SecretKey key, File inputFile, File outputFile) {
+        try (
+                FileInputStream fis = new FileInputStream(inputFile);
+                FileOutputStream fos = new FileOutputStream(outputFile)
+        ) {
+            byte[] iv = new byte[GCM_IV_LENGTH];
+            fis.read(iv);
+
+            Cipher cipher = Cipher.getInstance(TRANSFORMATION);
+            GCMParameterSpec spec = new GCMParameterSpec(GCM_TAG_LENGTH, iv);
+
+            cipher.init(Cipher.DECRYPT_MODE, key, spec);
+
+            byte[] buffer = new byte[8192];
+            int bytesRead;
+
+            while ((bytesRead = fis.read(buffer)) != -1) {
+                byte[] decrypted = cipher.update(buffer, 0, bytesRead);
+
+                if (decrypted != null) {
+                    fos.write(decrypted);
+                }
+            }
+
+            byte[] finalBytes = cipher.doFinal();
+
+            if (finalBytes != null) {
+                fos.write(finalBytes);
+            }
+
+        } catch (NoSuchAlgorithmException | InvalidKeyException | BadPaddingException |
+                 IllegalBlockSizeException | IOException | InvalidAlgorithmParameterException |
+                 NoSuchPaddingException ex) {
+            System.out.println("Error encrypting/decrypting file.txt: " + ex.getMessage());
+        }
+    }
+
 
 }
