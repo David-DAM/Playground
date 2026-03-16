@@ -1,5 +1,6 @@
 package com.david.design_patterns.specification;
 
+@FunctionalInterface
 public interface Specification<T> {
     boolean isSatisfiedBy(T candidate);
 
