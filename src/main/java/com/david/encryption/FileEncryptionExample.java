@@ -12,12 +12,11 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 
-public class EncryptionExample {
+public class FileEncryptionExample {
 
     private static final String ALGORITHM = "AES";
     private static final String TRANSFORMATION = "AES/GCM/NoPadding";
     private static final String KEY = "7d2dda0f-6acf-4b";
-    private static final int AES_KEY_SIZE = 256;
     private static final int GCM_IV_LENGTH = 12;
     private static final int GCM_TAG_LENGTH = 128;
     private static final String FILE_DECRYPTED_PATH = "src/main/resources/encryption/file.txt";
