@@ -1,12 +1,5 @@
 package com.david.design_patterns.observer;
 
-public class Observer {
-    public static void main(String[] args) {
-        NewsAgency newsAgency = new NewsAgency();
-        NewsChannel newsChannel = new NewsChannel();
-
-        newsAgency.addObserver(newsChannel);
-        newsAgency.setNews("news");
-        System.out.println(newsChannel.getNews());
-    }
+public interface Observer {
+    void update(String message);
 }
